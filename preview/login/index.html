@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Rewatchr</title>
+    <style>
+      :root {
+        --bg: #0b0b0f;
+        --panel: #15151c;
+        --red: #ef233c;
+        --text: #f8f9fa;
+        --muted: #8d99ae;
+        --border: #2b2d42;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 20% 10%, rgba(239,35,60,.22), transparent 32%),
+          radial-gradient(circle at 80% 20%, rgba(100,80,255,.16), transparent 28%),
+          var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        padding: 24px;
+      }
+      .card {
+        width: min(460px, 100%);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 14px;
+        background: rgba(21,21,28,.9);
+        box-shadow: 0 30px 90px rgba(0,0,0,.5);
+        padding: 30px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 950;
+      }
+      .brand img {
+        width: 46px;
+        height: 46px;
+        border-radius: 999px;
+        background: #000;
+        box-shadow: 0 0 34px rgba(239,35,60,.36);
+      }
+      h1 { margin: 24px 0 8px; font-size: 36px; }
+      p { margin: 0; color: var(--muted); line-height: 1.7; }
+      form { display: grid; gap: 13px; margin-top: 24px; }
+      input {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 12px;
+        background: var(--bg);
+        color: white;
+        padding: 14px;
+        outline: 0;
+      }
+      button, a {
+        border-radius: 999px;
+        padding: 12px 18px;
+        font-weight: 950;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      button {
+        border: 0;
+        background: var(--red);
+        color: white;
+        box-shadow: 0 0 34px rgba(239,35,60,.3);
+      }
+      a {
+        display: inline-block;
+        border: 1px solid rgba(255,255,255,.14);
+        color: white;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="brand">
+        <img src="/rewatchr-logo.png" alt="Rewatchr logo" />
+        Rewatchr
+      </div>
+      <h1>Login</h1>
+      <p>Step into your watchlist HQ. Your next binge, ratings, and rewatch-worthy legends are waiting.</p>
+      <form onsubmit="login(event)">
+        <input id="username" name="username" placeholder="Username" autocomplete="username" required />
+        <input id="email" name="email" type="email" placeholder="Email" autocomplete="email" required />
+        <input id="password" name="password" type="password" placeholder="Password" autocomplete="current-password" required />
+        <button type="submit">Login</button>
+      </form>
+      <a href="/">Back to Rewatchr</a>
+    </main>
+    <script>
+      function login(event) {
+        event.preventDefault();
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        if (!username || !email || !password) return;
+        localStorage.setItem("rewatchr.preview.user", JSON.stringify({ username, email }));
+        window.location.href = "/";
+      }
+    </script>
+  </body>
+</html>

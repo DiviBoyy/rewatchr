@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Anime | Rewatchr</title>
+    <style>
+      :root {
+        --bg: #0b0b0f;
+        --panel: #15151c;
+        --red: #ef233c;
+        --text: #f8f9fa;
+        --muted: #8d99ae;
+        --border: #2b2d42;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      a { color: inherit; text-decoration: none; }
+      button, input, select, textarea { font: inherit; }
+      .nav {
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 5vw;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+        background: rgba(11,11,15,.86);
+        backdrop-filter: blur(18px);
+      }
+      .brand { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 950; }
+      .brand img { width: 46px; height: 46px; border-radius: 999px; background: #000; box-shadow: 0 0 34px rgba(239,35,60,.36); }
+      .back {
+        border: 1px solid rgba(239,35,60,.55);
+        border-radius: 999px;
+        color: var(--red);
+        padding: 10px 16px;
+        font-weight: 950;
+      }
+      main { padding: 48px 5vw 70px; }
+      .head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 26px;
+      }
+      .eyebrow {
+        display: inline-flex;
+        color: var(--red);
+        border: 1px solid rgba(239,35,60,.45);
+        background: rgba(239,35,60,.1);
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-weight: 950;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+      h1 { margin: 16px 0 0; font-size: clamp(38px, 6vw, 72px); line-height: 1; }
+      p { color: var(--muted); line-height: 1.7; max-width: 620px; }
+      .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; }
+      .card {
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 10px;
+        background: var(--panel);
+        transition: .25s ease;
+        cursor: pointer;
+      }
+      .card:hover { transform: translateY(-5px); border-color: rgba(239,35,60,.6); box-shadow: 0 0 34px rgba(239,35,60,.2); }
+      .poster { aspect-ratio: 2 / 3; width: 100%; object-fit: cover; background: var(--border); }
+      .body { padding: 14px; }
+      h3 { margin: 0; min-height: 44px; font-size: 15px; }
+      .meta { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 13px; margin-top: 10px; }
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        z-index: 30;
+        place-items: center;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 14px;
+        background: rgba(0,0,0,.72);
+      }
+      .modal.open { display: grid; }
+      .detail {
+        width: min(560px, 100%);
+        max-height: min(88vh, 620px);
+        display: grid;
+        grid-template-columns: 125px 1fr;
+        gap: 14px;
+        overflow-y: auto;
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 14px;
+        box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      }
+      .detail img { width: 100%; max-height: 188px; object-fit: cover; border-radius: 10px; }
+      .detail-content { min-height: 0; overflow-y: auto; padding-right: 4px; }
+      .detail h2 { margin: 9px 0 3px; font-size: 21px; }
+      .detail p { font-size: 12px; line-height: 1.45; }
+      .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+      .field-grid input, .field-grid select, textarea {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 10px;
+        background: var(--bg);
+        color: white;
+        padding: 9px;
+        font-size: 12px;
+        outline: 0;
+      }
+      textarea { min-height: 54px; resize: vertical; margin-top: 10px; }
+      .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+      .primary, .ghost {
+        border-radius: 999px;
+        padding: 9px 12px;
+        font-size: 12px;
+        font-weight: 950;
+        cursor: pointer;
+      }
+      .primary { border: 0; background: var(--red); color: white; box-shadow: 0 0 28px rgba(239,35,60,.28); }
+      .ghost { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.08); color: white; }
+      .login-required-card {
+        width: min(420px, 100%);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 28px;
+        text-align: center;
+        box-shadow: 0 30px 90px rgba(0,0,0,.55);
+        max-height: min(88vh, 620px);
+        overflow-y: auto;
+      }
+      .login-required-card h2 { margin: 12px 0 8px; font-size: 30px; }
+      .login-required-actions { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+      @media (max-width: 980px) {
+        .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .head { display: block; }
+        .detail { grid-template-columns: 1fr; }
+        .detail img { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="brand" href="/"><img src="/rewatchr-logo.png" alt="Rewatchr logo" /> Rewatchr</a>
+      <a class="back" href="/">Back Home</a>
+    </nav>
+    <main>
+      <div class="head">
+        <div>
+          <span class="eyebrow">Anime only</span>
+          <h1>Explore Anime</h1>
+        </div>
+        <p>Only posters, titles, ratings, years, and genres. Clean browsing mode, no extra drama. The anime already provides enough drama.</p>
+      </div>
+      <div class="grid" id="grid"></div>
+    </main>
+    <div class="modal" id="modal">
+      <div class="detail" id="detail"></div>
+    </div>
+    <div class="modal" id="loginRequiredModal">
+      <div class="login-required-card">
+        <span class="eyebrow">Login required</span>
+        <h2>Login to add anime</h2>
+        <p>You need to login before adding anime to your watchlist.</p>
+        <div class="login-required-actions">
+          <button class="ghost" onclick="closeLoginRequired()" type="button">Leave it..</button>
+          <button class="primary" onclick="window.location.href='/login'" type="button">Login</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      let anime = [
+        { id: 16498, title: "Attack on Titan", jp: "Shingeki no Kyojin", type: "TV", rating: 9.1, year: 2013, status: "Completed", episodes: 25, genres: ["Action","Drama","Mystery"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-buvcRTBx4NSm.jpg", desc: "Humanity fights for survival behind giant walls while brutal secrets reshape the war." },
+        { id: 1535, title: "Death Note", jp: "Desu Noto", type: "TV", rating: 8.9, year: 2006, status: "Completed", episodes: 37, genres: ["Mystery","Psychological"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-kUgkcrfOrkUM.jpg", desc: "A genius student finds a notebook that kills anyone whose name is written inside." },
+        { id: 97940, title: "Black Clover", jp: "Black Clover", type: "TV", rating: 7.8, year: 2017, status: "Completed", episodes: 170, genres: ["Action","Fantasy"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97940-fyh8o7gNbha0.png", desc: "A magicless boy aims to become Wizard King through pure stubborn shounen energy." },
+        { id: 269, title: "Bleach", jp: "BLEACH", type: "TV", rating: 8.0, year: 2004, status: "Completed", episodes: 366, genres: ["Action","Supernatural"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx269-d2GmRkJbMopq.png", desc: "A teenager becomes a Soul Reaper and enters a stylish world of spirits and legendary battles." },
+        { id: 11061, title: "Hunter x Hunter", jp: "Hunter x Hunter", type: "TV", rating: 9.0, year: 2011, status: "Completed", episodes: 148, genres: ["Action","Adventure"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11061-y5gsT1hoHuHw.png", desc: "A young hunter searches for his father through increasingly brilliant arcs." },
+        { id: 21, title: "One Piece", jp: "ONE PIECE", type: "TV", rating: 8.8, year: 1999, status: "Ongoing", episodes: 1100, genres: ["Adventure","Comedy"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3yMPcKM.jpg", desc: "Pirates chase the ultimate treasure in a massive adventure about freedom and friendship." },
+        { id: 154587, title: "Frieren", jp: "Sousou no Frieren", type: "TV", rating: 9.2, year: 2023, status: "Completed", episodes: 28, genres: ["Drama","Fantasy"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-qQTzQnEJJ3oB.jpg", desc: "An elf mage reflects on time, grief, memory, and what adventures leave behind." },
+        { id: 113415, title: "Jujutsu Kaisen", jp: "Jujutsu Kaisen", type: "TV", rating: 8.6, year: 2020, status: "Completed", episodes: 24, genres: ["Action","Supernatural"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-LHBAeoZDIsnF.jpg", desc: "Cursed energy, slick fights, and a very bad time for emotionally stable people." },
+        { id: 19, title: "Monster", jp: "MONSTER", type: "TV", rating: 8.9, year: 2004, status: "Completed", episodes: 74, genres: ["Mystery","Psychological"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx19-gtMC64182sm4.jpg", desc: "A doctor hunts a terrifying former patient in a slow-burn psychological thriller." },
+        { id: 13601, title: "Psycho-Pass", jp: "PSYCHO-PASS", type: "TV", rating: 8.2, year: 2012, status: "Completed", episodes: 22, genres: ["Psychological","Sci-Fi"], poster: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx13601-i42VFuHpqEOJ.jpg", desc: "A dystopian justice system measures criminal intent before crime happens." }
+      ];
+      function posterFallback(title) {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="420" height="630"><rect width="420" height="630" fill="#15151c"/><text x="210" y="320" fill="#f8f9fa" font-family="Arial" font-size="30" font-weight="800" text-anchor="middle">${title.slice(0, 18)}</text></svg>`;
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      }
+      async function loadTopAnime() {
+        const query = `query { Page(page: 1, perPage: 50) { media(type: ANIME, sort: SCORE_DESC) { id title { romaji english native } coverImage { extraLarge large } format averageScore seasonYear startDate { year } status episodes genres description(asHtml: false) } } }`;
+        try {
+          const response = await fetch("https://graphql.anilist.co", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ query })
+          });
+          if (!response.ok) return;
+          const json = await response.json();
+          const loaded = json.data.Page.media.map(item => ({
+            id: item.id,
+            title: item.title.english || item.title.romaji,
+            jp: item.title.native || item.title.romaji,
+            type: item.format || "Anime",
+            rating: item.averageScore ? (item.averageScore / 10).toFixed(1) : "N/A",
+            year: item.seasonYear || item.startDate?.year || "TBA",
+            status: item.status || "TBA",
+            episodes: item.episodes || 0,
+            genres: item.genres || [],
+            poster: item.coverImage.extraLarge || item.coverImage.large,
+            desc: (item.description || "No description available yet.").replace(new RegExp("<br\\\\s*/?>", "gi"), "\\n").replace(new RegExp("<[^>]+>", "g"), "")
+          }));
+          if (loaded.length) anime = loaded;
+        } catch {
+          // Keep fallback anime if AniList is unavailable.
+        }
+      }
+      function renderAnime() {
+        document.getElementById("grid").innerHTML = anime.map(a => `
+          <article class="card" onclick="openDetail(${a.id})">
+            <img class="poster" src="${a.poster}" alt="${a.title}" onerror="this.onerror=null;this.src=posterFallback(this.alt)" />
+            <div class="body">
+              <h3>${a.title}</h3>
+              <div style="color:var(--muted);font-size:13px">${a.jp}</div>
+              <div class="meta"><span>${a.type} / ${a.year}</span><span>${a.rating}/10</span></div>
+              <div class="meta"><span>${a.genres.join(", ")}</span></div>
+            </div>
+          </article>
+        `).join("");
+      }
+      function findAnime(id) {
+        return anime.find(item => item.id === id);
+      }
+      function openDetail(id) {
+        const a = findAnime(id);
+        if (!a) return;
+        const shortDesc = summarizeDescription(a.desc);
+        document.getElementById("detail").innerHTML = `
+          <img src="${a.poster}" alt="${a.title}" onerror="this.onerror=null;this.src=posterFallback(this.alt)" />
+          <div class="detail-content">
+            <button class="ghost" style="float:right" onclick="closeDetail()">Close</button>
+            <span class="eyebrow">${a.type} / ${a.status || "TBA"}</span>
+            <h2>${a.title}</h2>
+            <p>${a.jp}</p>
+            <p>${shortDesc}</p>
+            <p><b>${a.rating}/10 avg</b> / ${a.episodes || "?"} episodes / ${a.year} / ${a.genres.join(", ")}</p>
+            <div class="field-grid">
+              <select id="status"><option>Watching</option><option>Completed</option><option>Plan to Watch</option><option>Dropped</option><option>On Hold</option></select>
+              <input id="rating" type="number" min="0" max="10" placeholder="Rating / 10" />
+              <input id="watched" type="number" min="0" max="${a.episodes || 9999}" placeholder="Episodes watched" />
+              <label style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px"><input id="rewatch" type="checkbox" /> Worth Rewatching?</label>
+            </div>
+            <textarea id="note" placeholder="Personal note"></textarea>
+            <div class="actions">
+              <button class="primary" onclick="saveAnime(${a.id})">Add to Watchlist</button>
+              <button class="ghost" onclick="closeDetail()">Leave it..</button>
+            </div>
+          </div>`;
+        document.getElementById("modal").classList.add("open");
+      }
+      function summarizeDescription(text) {
+        const clean = (text || "No description available yet.").replace(/\s+/g, " ").trim();
+        const sentences = clean.match(/[^.!?]+[.!?]+/g);
+        if (sentences?.length) return sentences.slice(0, 3).join(" ").trim();
+        return clean.length > 230 ? `${clean.slice(0, 227).trim()}...` : clean;
+      }
+      function closeDetail() {
+        document.getElementById("modal").classList.remove("open");
+      }
+      function getWatchlist() {
+        const raw = localStorage.getItem("rewatchr.preview.watchlist");
+        return raw ? JSON.parse(raw) : [];
+      }
+      function setWatchlist(list) {
+        localStorage.setItem("rewatchr.preview.watchlist", JSON.stringify(list));
+      }
+      function isLoggedIn() {
+        return !!localStorage.getItem("rewatchr.preview.user");
+      }
+      function saveAnime(id) {
+        if (!isLoggedIn()) {
+          document.getElementById("loginRequiredModal").classList.add("open");
+          return;
+        }
+        const a = findAnime(id);
+        if (!a) return;
+        const list = getWatchlist().filter(item => item.animeId !== id);
+        list.unshift({
+          animeId: id,
+          animeTitle: a.title,
+          poster: a.poster,
+          status: document.getElementById("status").value,
+          watched: Number(document.getElementById("watched").value || 0),
+          episodes: a.episodes || 0,
+          rating: Number(document.getElementById("rating").value || 0),
+          rewatch: document.getElementById("rewatch").checked,
+          genres: a.genres
+        });
+        setWatchlist(list);
+        closeDetail();
+      }
+      function closeLoginRequired() {
+        document.getElementById("loginRequiredModal").classList.remove("open");
+      }
+      async function init() {
+        renderAnime();
+        await loadTopAnime();
+        renderAnime();
+      }
+      init();
+    </script>
+  </body>
+</html>
